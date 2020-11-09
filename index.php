@@ -16,7 +16,9 @@ $connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB
 <body>
 	<?
 
-	echo '<h4>Hello!</h4>';
+	echo '<h4>This is Johnny /> </h4>';
+	echo '<img src="https://sun9-3.userapi.com/c629308/v629308734/25806/wqEr5AN98YE.jpg" alt="Пример кода">';
+	
 	
 	//пример рабочего запроса;
 	$dbconnect = pg_connect($connect_string);
