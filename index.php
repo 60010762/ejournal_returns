@@ -9,6 +9,46 @@ if (!isset($_SESSION['uname']))
 	exit;
 }
 
+if(@$_POST['search_item']) {
+	$item = pg_escape_string($_POST['item']); 		
+			
+	$arrContextOptions=array(
+	"ssl"=>array(
+			"verify_peer"=>false,
+			"verify_peer_name"=>false,
+		),
+	);  
+	//$json=file_get_contents("https://locdev/ld_pre/db/index.php?ean_lm=" .$item, false, stream_context_create($arrContextOptions));
+	//$json=file_get_contents("https://locdev/ld_pre/db/index.php?ean_lm=" .$item, false, stream_context_create($arrContextOptions));
+	$json = '{"ean": "0020066118457","lm": "13321233","name": "Эмаль д/лодок MarineCoat.подвод.син 0,9л"}';
+	
+	$arr= json_decode($json,true);
+	$item_ean = $arr['ean'];
+	$item_lm = $arr['lm'];
+	$item_name = $arr['name'];
+	if ($item_name == "") {
+		$item = "";
+		$text = "Неправильный ШК или ЛМ";
+	}
+}
+
+if(@$_POST['insert_new_record']) {
+	$n_ord = pg_escape_string($_POST['n_ord']);
+	$n_trn = pg_escape_string($_POST['n_trn']);
+	$item_ean = pg_escape_string($_POST['item_ean']);
+	$item_lm = pg_escape_string($_POST['item_lm']);
+	$item_name = pg_escape_string($_POST['item_name']);
+	$qty = pg_escape_string($_POST['qty']);
+	$return = pg_escape_string($_POST['return']);
+	
+	$db = pg_connect(DB_CONNSTR);
+	$query = "INSERT INTO online (ord, trn, ean, lm, item_name, qty, return)
+	VALUES ('".$n_ord."', '".$n_trn."', '".$item_ean."', '".$item_lm."', '".$item_name."', '".$qty."', '".$return."')";
+	pg_query($db, $query);
+	$_SESSION['temp'] = $query;
+}	
+
+
 $connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB_USER." password=".DB_PASSWORD;
 
 if ($_GET["select_menu"]>0){
@@ -34,9 +74,13 @@ if ($_GET["select_menu"]>0){
 	
 
 
-	$password = "aa";
+	$password = "passwd";
 	$hash = crypt($password);
 	//echo $hash. '</br>';
+	echo '&bull;' .$_SESSION['uname'];
+	echo '&bull;' .$_SESSION['urole'];
+	echo '&bull;' .$_SESSION['umag'];
+	//echo '</br>' .$_SESSION['temp'];
 	?>
 	<nav aria-label="Page navigation example">
 		<ul class="pagination">
@@ -49,17 +93,62 @@ if ($_GET["select_menu"]>0){
 		</ul>
 	</nav>
 	<?
-	echo "<h4>Here's Johnny!</h4>";
-	if ($select_menu==1) {
-			echo '<img style="width: 30%" src="https://sun9-3.userapi.com/c629308/v629308734/25806/wqEr5AN98YE.jpg" alt="Пример кода"></br>';
-		
-			echo '<hr/><table class="table table-bordered">';
-			echo '<tr>
-				<th>Дата</th><th>Время</th><th>№ заказа</th><th>ШК</th>
-				<th>ЛМ</th><th>Наименование</th><th>Количество</th><th>Возврат за услугу</th>
-				<th>Сумма за услугу</th><th>Возврат осуществлен</th>
-			</tr>';
+	
+	if ($select_menu==1) { //меню online
+		if ($_SESSION['urole'] == 'ohr' || $_SESSION['urole'] == 'adm') {
+			if ($item == "") {
+			?>
+			<form method="post" ENCTYPE="multipart/form-data">
+				<div style="display: flex">
+					<input class="form-control" style="width: 200px;" name="item" required autofocus placeholder="Ввод ШК или ЛМ">
+					&ensp;					
+					<input type="submit" style="width: 120px;" name="search_item" value="Новая запись" class="btn btn-success">
+				</div>
+			</form			
+			<?	
+			} else {
+				?>				
+				<form method="post" ENCTYPE="multipart/form-data">
+					<h5><font color="grey">Новая запись</font></h5>
+					<table class="table table-bordered">
+						<tr>
+							<th>ШК</th>
+							<th>ЛМ</th>
+							<th>Наименование</th>
+							<th>№ заказа</th>
+							<th>№ транз.</th>
+							<th>Кол-во</th>
+							<th>Возврат за услугу</th>
+							<th></th>
+						</tr>
+						<tr>
+							<td style="width: 170px"><input class="form-control" name="item_ean" readonly value="<?=$item_ean?>"></td>
+							<td style="width: 120px"><input class="form-control" name="item_lm" readonly value="<?=$item_lm?>"></td>
+							<td><input class="form-control" name="item_name" readonly value="<?=$item_name?>"></td>
+							<td style="width: 120px"><input class="form-control" name="n_ord" required autofocus ></td>
+							<td style="width: 100px"><input class="form-control" name="n_trn" required ></td>
+							<td style="width: 100px"><input class="form-control" name="qty" required ></td>
+							<td style="width: 100px"><select name="return"><option value=1>Да</option><option value=0>Нет</option></select></td>
+							<td><input type="submit" name="insert_new_record" value="Записать" class="btn btn-success"></td>
+						</tr>
+					</table>								
+				</form>				
+				<hr/>			
+			<?
+			}
+		}
+			if ($text!="") {
+				echo '<hr/>';
+				echo "<h4>Here's Johnny!</h4>";
+				echo '<img style="width: 30%" src="https://sun9-3.userapi.com/c629308/v629308734/25806/wqEr5AN98YE.jpg" alt="Пример кода"></br>';
 			
+				echo '<hr/><table class="table table-bordered">';
+				echo '<tr>
+					<th>Дата</th><th>Время</th><th>№ заказа</th><th>ШК</th>
+					<th>ЛМ</th><th>Наименование</th><th>Количество</th><th>Возврат за услугу</th>
+					<th>Сумма за услугу</th><th>Возврат осуществлен</th>
+				</tr>';
+			}
 	/* 		while($rows_question = mysqli_fetch_row($sql_ozt_question)){
 				$num_table++;
 				echo '<tr><td>'.$num_table.'</td><td>'.$rows_question[1].'</td><td>'.$rows_question[2].'</td><td> <a href="index.php?select_menu='.$select_menu.'&otdel='.$otdel.'&features=0&cmd=create&create_next='.$rows_question[0].'">редактирование</td>
