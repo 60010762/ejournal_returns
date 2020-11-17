@@ -1,13 +1,14 @@
 <?
 session_start();
 //Подключение к БД
-require 'sys/db_config.php';
-$connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB_USER." password=".DB_PASSWORD;
-require_once ("sys/auth.php");
+require 'db_config.php';
+$db = pg_connect(DB_CONNSTR);
+//$connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB_USER." password=".DB_PASSWORD;
+require_once ("auth.php");
 //Проверка была ли авторизация
 if (isset($_SESSION['uname']))
 {
-	header('Location: index.php');
+	header('Location: ../index.php');
 	exit;
 }
 
@@ -30,9 +31,24 @@ if (isset($_SESSION['uname']))
 					<form role="form" action="login.php" method="post">
 						<center><img src="img/logo.svg"/><h2 class="form-signin-heading">Электронный журнал возвратов</h2></center><br/>
 						<center><h4 class="form-signin-heading" style="color: #6c6;">Добро пожаловать</h4></center>
-						<label>LDAP <font color="red">*</font></label>
+						<label>Магазин</label>
+						<?
+						echo '<select class="form-control name="mag">';
+						$sql_stores = pg_query($db,"SELECT number, name FROM stores");
+						if ($sql_stores){
+							while($result = pg_fetch_row($sql_stores)){
+								echo '<option value=1>'.$result[0].' '.$result[1].'</option>';
+							}
+						} else {
+							
+						}
+						echo '<option value=1>Новый магазин</option>';
+						echo '</select>';
+						?>
+						
+						<label>Логин</label>
 						<input type="text" class="form-control" name="login" required autofocus><br/>
-						<label>Пароль <font color="red">*</font></label>
+						<label>Пароль</label>
 						<input type="password" class="form-control" name="password" required><br/>
 						<button class="btn btn-lg btn-success btn-block" type="submit">Войти</button>
 					</form>

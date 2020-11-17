@@ -2,10 +2,11 @@
 session_start(); 
 //Подключаем БД
 require 'sys/db_config.php';
+$db = pg_connect(DB_CONNSTR);
 
 if (!isset($_SESSION['uname']))
 {
-	header('Location: login.php');
+	header('Location: sys/login.php');
 	exit;
 }
 
@@ -38,18 +39,25 @@ if(@$_POST['insert_new_record']) {
 	$item_ean = pg_escape_string($_POST['item_ean']);
 	$item_lm = pg_escape_string($_POST['item_lm']);
 	$item_name = pg_escape_string($_POST['item_name']);
-	$qty = pg_escape_string($_POST['qty']);
-	$return = pg_escape_string($_POST['return']);
+	$qty = pg_escape_string(str_replace(',', '.', $_POST['qty']));
+	$total = pg_escape_string(str_replace(',', '.', $_POST['total']));
 	
-	$db = pg_connect(DB_CONNSTR);
-	$query = "INSERT INTO online (ord, trn, ean, lm, item_name, qty, return)
-	VALUES ('".$n_ord."', '".$n_trn."', '".$item_ean."', '".$item_lm."', '".$item_name."', '".$qty."', '".$return."')";
-	pg_query($db, $query);
-	$_SESSION['temp'] = $query;
+	if (is_numeric($n_ord) && is_numeric($n_trn) && is_numeric($qty) && is_numeric($total)) {	
+		$query = "INSERT INTO online (ord, trn, ean, lm, item_name, qty, total) 
+		VALUES ('".$n_ord."', '".$n_trn."', '".$item_ean."', '".$item_lm."', '".$item_name."', '".$qty."', '".$total."')";
+		pg_query($db, $query);
+		pg_close($db);
+		//предотвращение повторной отправки формы
+		header("Location:".$_SERVER['PHP_SELF']);
+	//$_SESSION['temp'] = $query;
+	} else {
+		//'<p style="border:3px #00B344  solid;>'.
+		$text = 'Запись не добавлена. Проверьте корректность данных:';
+	}
 }	
 
 
-$connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB_USER." password=".DB_PASSWORD;
+//$connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB_USER." password=".DB_PASSWORD;
 
 if ($_GET["select_menu"]>0){
 	$select_menu = trim($_GET["select_menu"]);
@@ -64,23 +72,22 @@ if ($_GET["select_menu"]>0){
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<? require("metacss.php");?>
+	<? require("sys/metacss.php");?>
 </head>
 <body>
-
+	<a href="sys/logout.php">Настройка</a>
 	<a href="sys/logout.php">Выход</a>
 	
 	<?
 	
 
 
-	$password = "passwd";
+	$password = "secur";
 	$hash = crypt($password);
-	//echo $hash. '</br>';
+	echo $hash. '</br>';
 	echo '&bull;' .$_SESSION['uname'];
 	echo '&bull;' .$_SESSION['urole'];
 	echo '&bull;' .$_SESSION['umag'];
-	//echo '</br>' .$_SESSION['temp'];
 	?>
 	<nav aria-label="Page navigation example">
 		<ul class="pagination">
@@ -95,7 +102,7 @@ if ($_GET["select_menu"]>0){
 	<?
 	
 	if ($select_menu==1) { //меню online
-		if ($_SESSION['urole'] == 'ohr' || $_SESSION['urole'] == 'adm') {
+		if ($_SESSION['urole'] == 'chop' || $_SESSION['urole'] == 'adm') {
 			if ($item == "") {
 			?>
 			<form method="post" ENCTYPE="multipart/form-data">
@@ -118,7 +125,7 @@ if ($_GET["select_menu"]>0){
 							<th>№ заказа</th>
 							<th>№ транз.</th>
 							<th>Кол-во</th>
-							<th>Возврат за услугу</th>
+							<th>Сумма за услугу</th>
 							<th></th>
 						</tr>
 						<tr>
@@ -128,42 +135,39 @@ if ($_GET["select_menu"]>0){
 							<td style="width: 120px"><input class="form-control" name="n_ord" required autofocus ></td>
 							<td style="width: 100px"><input class="form-control" name="n_trn" required ></td>
 							<td style="width: 100px"><input class="form-control" name="qty" required ></td>
-							<td style="width: 100px"><select name="return"><option value=1>Да</option><option value=0>Нет</option></select></td>
+							<td style="width: 100px"><input class="form-control" name="total" required ></td>
+							<!--<td style="width: 100px"><select name="return"><option value=1>Да</option><option value=0>Нет</option></select></td>-->
 							<td><input type="submit" name="insert_new_record" value="Записать" class="btn btn-success"></td>
 						</tr>
 					</table>								
-				</form>				
-				<hr/>			
+				</form>			
 			<?
 			}
 		}
 			if ($text!="") {
-				echo '<hr/>';
-				echo "<h4>Here's Johnny!</h4>";
-				echo '<img style="width: 30%" src="https://sun9-3.userapi.com/c629308/v629308734/25806/wqEr5AN98YE.jpg" alt="Пример кода"></br>';
+
+				echo $text;
+				//echo '<img style="width: 30%" src="https://sun9-3.userapi.com/c629308/v629308734/25806/wqEr5AN98YE.jpg" alt="Пример кода"></br>';
+			}
 			
-				echo '<hr/><table class="table table-bordered">';
-				echo '<tr>
+			echo '<hr/><table class="table table-bordered">';
+			echo '<tr>
 					<th>Дата</th><th>Время</th><th>№ заказа</th><th>ШК</th>
 					<th>ЛМ</th><th>Наименование</th><th>Количество</th><th>Возврат за услугу</th>
 					<th>Сумма за услугу</th><th>Возврат осуществлен</th>
 				</tr>';
-			}
-	/* 		while($rows_question = mysqli_fetch_row($sql_ozt_question)){
-				$num_table++;
-				echo '<tr><td>'.$num_table.'</td><td>'.$rows_question[1].'</td><td>'.$rows_question[2].'</td><td> <a href="index.php?select_menu='.$select_menu.'&otdel='.$otdel.'&features=0&cmd=create&create_next='.$rows_question[0].'">редактирование</td>
-					<td>
-					'?>
-					<a href="index.php?select_menu=<?=$select_menu?>&otdel=<?=$otdel?>&del=<?=$rows_question[0]?>" onclick="return  confirm('Вы уверены, что хотите удалить тест навсегда? Все ответы так же будут удалены.')">Удаление</a>
-					<!--<a href="index.php?select_menu=<?=$select_menu?>&otdel=<?=$otdel?>&delconfirm=<?=$rows_question[0]?>">Удаление</a>-->
-					<?'
-					</td>
-				</tr>';
-			} */
-			echo '</table>';
 				
-		}
-	 
+			$sql_online_tab = pg_query($db,"SELECT to_char(jdatetime, 'DD.MM.YYYY'), to_char(jdatetime, 'HH24:MI:SS'), ord, trn, ean, lm, item_name, qty, total, return FROM online");
+			//$rows_result = pg_query_rows($sql_online_tab);
+			//if ($rows_result>0){				
+				while($result = pg_fetch_row($sql_online_tab)){
+					echo '<tr><td>'.$result[0].'</td><td>'.$result[1].'</td><td>'.$result[2].'</td><td>'.$result[3].'</td><td>'.$result[4].'</td><td>'.$result[5].'</td><td>'.$result[6].'</td><td>'.$result[7].'</td><td>'.$result[8].'</td><td>'.$result[9].'</td></tr>';					
+				}
+			//}
+			pg_close($db);
+	} 
+			
+			echo '</table>';
 	if ($select_menu==2) {
 		echo '<img style="width: 30%" src="https://avatars.mds.yandex.net/get-zen_doc/1581919/pub_5d9ca84ff557d000b10d9faa_5d9cac69028d6800ae115b88/scale_1200" alt="Пример кода"></br>';
 		
