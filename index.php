@@ -82,9 +82,6 @@ if ($_GET["select_menu"]>0){
 	
 
 
-	$password = "secur";
-	$hash = crypt($password);
-	echo $hash. '</br>';
 	echo '&bull;' .$_SESSION['uname'];
 	echo '&bull;' .$_SESSION['urole'];
 	echo '&bull;' .$_SESSION['umag'];
