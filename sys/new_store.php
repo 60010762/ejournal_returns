@@ -10,6 +10,7 @@ if(@$_POST['insert_new_store']) {
 	$store = pg_escape_string($_POST['store_nmbr']);
 	$store_name = pg_escape_string($_POST['store_name']);
 	$tz = $_POST['time_zone'];
+	$password = pg_escape_string($_POST['password']);
 	
 	$sql_mag = pg_query($db,"SELECT * FROM stores WHERE number =".$store);
 	if (pg_fetch_row($sql_mag)>0) {
@@ -17,6 +18,12 @@ if(@$_POST['insert_new_store']) {
 		pg_close($db);
 	} else {
 		pg_query($db,"INSERT INTO stores (number, name, time_zone) VALUES (".$store.", '".$store_name."', ".$tz.")");
+		pg_query($db,"INSERT INTO users (mag, name, pwdhash) VALUES 
+					  (".$store.", 'secur', '".crypt($password)."'),
+					  (".$store.", 'chop', ''),
+					  (".$store.", 'cais', ''),
+					  (".$store.", 'ozk', ''),
+					  (".$store.", 'dd', '')");
 		pg_close($db);
 		header('Location: ../index.php');
 		exit;

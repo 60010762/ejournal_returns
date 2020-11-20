@@ -83,7 +83,6 @@ if ($_GET["select_menu"]>0){
 
 
 	echo '&bull;' .$_SESSION['uname'];
-	echo '&bull;' .$_SESSION['urole'];
 	echo '&bull;' .$_SESSION['umag'];
 	?>
 	<nav aria-label="Page navigation example">
@@ -99,12 +98,12 @@ if ($_GET["select_menu"]>0){
 	<?
 	
 	if ($select_menu==1) { //меню online
-		if ($_SESSION['urole'] == 'chop' || $_SESSION['urole'] == 'adm') {
+		if ($_SESSION['uname'] == 'chop' || $_SESSION['uname'] == 'secur' || $_SESSION['uname'] == 'adm') {
 			if ($item == "") {
 			?>
 			<form method="post" ENCTYPE="multipart/form-data">
 				<div style="display: flex">
-					<input class="form-control" style="width: 200px;" name="item" required autofocus placeholder="Ввод ШК или ЛМ">
+					<input class="form-control" style="width: 200px;" name="item" required autofocus placeholder="Ввод ШК или ЛМ" onkeyup="this.value = this.value.replace (/[^0-9]/, '')">
 					&ensp;					
 					<input type="submit" style="width: 120px;" name="search_item" value="Новая запись" class="btn btn-success">
 				</div>
@@ -129,10 +128,10 @@ if ($_GET["select_menu"]>0){
 							<td style="width: 170px"><input class="form-control" name="item_ean" readonly value="<?=$item_ean?>"></td>
 							<td style="width: 120px"><input class="form-control" name="item_lm" readonly value="<?=$item_lm?>"></td>
 							<td><input class="form-control" name="item_name" readonly value="<?=$item_name?>"></td>
-							<td style="width: 120px"><input class="form-control" name="n_ord" required autofocus ></td>
-							<td style="width: 100px"><input class="form-control" name="n_trn" required ></td>
-							<td style="width: 100px"><input class="form-control" name="qty" required ></td>
-							<td style="width: 100px"><input class="form-control" name="total" required ></td>
+							<td style="width: 120px"><input class="form-control" name="n_ord" required autofocus onkeyup="this.value = this.value.replace (/[^0-9]/, '')"></td>
+							<td style="width: 100px"><input class="form-control" name="n_trn" required onkeyup="this.value = this.value.replace (/[^0-9]/, '')"></td>
+							<td style="width: 100px"><input class="form-control" name="qty" required onkeyup="this.value = this.value.replace (/[^0-9\.\,]/, '')"></td>
+							<td style="width: 100px"><input class="form-control" name="total" required onkeyup="this.value = this.value.replace (/[^0-9\.\,]/, '')"></td>
 							<!--<td style="width: 100px"><select name="return"><option value=1>Да</option><option value=0>Нет</option></select></td>-->
 							<td><input type="submit" name="insert_new_record" value="Записать" class="btn btn-success"></td>
 						</tr>
