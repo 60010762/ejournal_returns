@@ -71,12 +71,15 @@ if(@$_POST['set_pass']) {
 		if ($pdd != "") $updatewhat = $updatewhat.",  pwddd = '".crypt($pdd)."'";
 		
 		pg_query($db, "UPDATE stores SET ".$updatewhat." where number = ".$_SESSION['umag']);
-		
+		pg_close($db);
+		header('Location: index.php');		
 	}
 }	
 if(@$_POST['ch_sec_pass']) {
 	$password = pg_escape_string($_POST['password']);
 	pg_query($db,"UPDATE stores SET pwdsecur = '".crypt($password)."' WHERE number =".$_SESSION['umag']);
+	pg_close($db);
+	header('Location: index.php');
 }
 
 //$connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB_USER." password=".DB_PASSWORD;
@@ -93,7 +96,7 @@ if ($_GET["select_menu"]>0){
 ?>
 
 <script>
-//скрипт из интернета для проверки совпадения паролей без перезагрузки страницы (https://askdev.ru/q/kak-proverit-pole-podtverzhdeniya-parolya-v-forme-bez-perezagruzki-stranicy-140334/)
+//скрипт для проверки совпадения паролей без перезагрузки страницы
 var check = function() {
 	if (document.getElementById('password').value !=  "" || document.getElementById('confirm_password').value !=  "") {
 		var regexp = /[а-яё]/i;
@@ -103,7 +106,6 @@ var check = function() {
 		} else if (document.getElementById('password').value ==
 		document.getElementById('confirm_password').value) {
 		document.getElementById('message').style.color = 'green';
-		//document.getElementById('message').innerHTML = '&#10004;';
 		document.getElementById('message').innerHTML = '<br/><input type="submit" class="btn btn-success" name="ch_sec_pass" value="Сохранить">';
 		} else {
 		document.getElementById('message').style.color = 'red';
@@ -274,7 +276,7 @@ var check = function() {
 				<input type="submit" style="width: 120px;" name="set_pass" value="Сохранить" class="btn btn-success">
 			</form>
 			<form method="post" class="yellowform">
-				<h5>Или поменять свой пароль</h5>
+				<h5>или поменять свой пароль</h5>
 				<label>Пароль для пользователя <b>secur</b> :
 					<input class="form-control" required name="password" id="password" type="password" onkeyup='check();' />
 				</label>
