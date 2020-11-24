@@ -54,6 +54,25 @@ if(@$_POST['insert_new_record']) {
 		//'<p style="border:3px #00B344  solid;>'.
 		$text = 'Запись не добавлена. Проверьте корректность данных:';
 	}
+}
+
+if(@$_POST['set_pass']) {
+	//проверяем, что пароли не пустые и формируем запрос на обновление указанных паролей
+	if ($_POST['pchop'].$_POST['pcais'].$_POST['pozk'].$_POST['pdd']!="") {
+		$pchop = pg_escape_string($_POST['pchop']);
+		$pcais = pg_escape_string($_POST['pcais']);
+		$pozk = pg_escape_string($_POST['pozk']);
+		$pdd = pg_escape_string($_POST['pdd']);
+		
+		$updatewhat = "number = ".$_SESSION['umag'];
+		if ($pchop != "") $updatewhat = $updatewhat.",  pwdchop = '".crypt($pchop)."'";
+		if ($pcais != "") $updatewhat = $updatewhat.",  pwdcais = '".crypt($pcais)."'";
+		if ($pozk != "") $updatewhat = $updatewhat.",  pwdozk = '".crypt($pozk)."'";
+		if ($pdd != "") $updatewhat = $updatewhat.",  pwddd = '".crypt($pdd)."'";
+		
+		pg_query($db, "UPDATE stores SET ".$updatewhat." where number = ".$_SESSION['umag']);
+		
+	}
 }	
 
 
@@ -92,6 +111,12 @@ if ($_GET["select_menu"]>0){
 			echo '<li class="page-item '.$style_features.'"><a class="page-link" href="index.php?select_menu=1">Online</a></li>';
 			if ($select_menu=='2'){$style_features="active";}else{$style_features="";}
 			echo '<li class="page-item '.$style_features.'"><a class="page-link" href="index.php?select_menu=2">Offline</a></li>';
+			if ($_SESSION['uname'] == 'secur' || $_SESSION['uname'] == 'adm') {
+				if ($select_menu=='3'){$style_features="active";}else{$style_features="";}
+				echo '<li class="page-item '.$style_features.'"><a class="page-link" href="index.php?select_menu=3">Отчеты</a></li>';
+				if ($select_menu=='4'){$style_features="active";}else{$style_features="";}
+				echo '<li class="page-item '.$style_features.'"><a class="page-link" href="index.php?select_menu=4">Админка</a></li>';
+			}
 			?>
 		</ul>
 	</nav>
@@ -187,21 +212,42 @@ if ($_GET["select_menu"]>0){
 			} */
 			echo '</table>';
 	}
-
-/* 	if (password_verify('passwd', $hash)) {
-    echo 'Пароль правильный!';
-	} else {
-		echo 'Пароль неправильный.';
-	}
-	echo '<hr>'; */
 	
-	//пример рабочего запроса;
-/* 	$dbconnect = pg_connect($connect_string);
-	$query = "select id, date from temp where id = 1";
-	$result = pg_query($dbconnect, $query);
-	$result = pg_fetch_row($result); 
-	echo $result[0] . '</br>' . $result[1];
-	pg_close($dbconnect); */
+	if ($select_menu==3) {
+		
+	}
+	
+	if ($select_menu==4) { //Меню Админка
+		?>
+		<div class="col-sm-4 col-sm-offset-4">
+			<form method="post" >
+				<h4>Задать новый пароль сотрудникам</h4>
+				</br>
+				<div style="display: flex; width: 200px">
+					<label style="width: 30%">chop</label>
+					<input type="text" class="form-control" name="pchop">					
+				</div>
+				</br>
+				<div style="display: flex; width: 200px">
+					<label style="width: 30%">cais</label>
+					<input type="text" class="form-control" name="pcais">					
+				</div>
+				</br>
+				<div style="display: flex; width: 200px">
+					<label style="width: 30%">ozk</label>
+					<input type="text" class="form-control" name="pozk">					
+				</div>
+				</br>
+				<div style="display: flex; width: 200px">
+					<label style="width: 30%">dd</label>
+					<input type="text" class="form-control" name="pdd">					
+				</div>
+				</br>
+				<input type="submit" style="width: 120px;" name="set_pass" value="Сохранить" class="btn btn-success">
+			</form>
+		</div>
+	<?
+	}
 	?>	
 </body>
 </html>

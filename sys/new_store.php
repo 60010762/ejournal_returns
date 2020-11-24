@@ -17,13 +17,13 @@ if(@$_POST['insert_new_store']) {
 		$text = "Магазин ".$store." уже существует.";
 		pg_close($db);
 	} else {
-		pg_query($db,"INSERT INTO stores (number, name, time_zone) VALUES (".$store.", '".$store_name."', ".$tz.")");
-		pg_query($db,"INSERT INTO users (mag, name, pwdhash) VALUES 
+		pg_query($db,"INSERT INTO stores (number, name, time_zone, pwdsecur) VALUES (".$store.", '".$store_name."', ".$tz.", '".crypt($password)."')");
+/* 		pg_query($db,"INSERT INTO users (mag, name, pwdhash) VALUES 
 					  (".$store.", 'secur', '".crypt($password)."'),
 					  (".$store.", 'chop', ''),
 					  (".$store.", 'cais', ''),
 					  (".$store.", 'ozk', ''),
-					  (".$store.", 'dd', '')");
+					  (".$store.", 'dd', '')"); */
 		pg_close($db);
 		header('Location: ../index.php');
 		exit;

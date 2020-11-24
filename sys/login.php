@@ -35,7 +35,7 @@ if (isset($_SESSION['uname']))
 							<label>Магазин</label>
 							<?
 							echo '<select class="form-control" name="store">';
-							$sql_stores = pg_query($db,"SELECT number, name FROM stores ORDER BY number");
+							$sql_stores = pg_query($db,"SELECT number, name FROM stores WHERE number <> 0 ORDER BY number");
 							if ($sql_stores){
 								while($result = pg_fetch_row($sql_stores)){
 									echo '<option value='.$result[0].'>'.$result[0].' '.$result[1].'</option>';
