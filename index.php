@@ -74,7 +74,10 @@ if(@$_POST['set_pass']) {
 		
 	}
 }	
-
+if(@$_POST['ch_sec_pass']) {
+	$password = pg_escape_string($_POST['password']);
+	pg_query($db,"UPDATE stores SET pwdsecur = '".crypt($password)."' WHERE number =".$_SESSION['umag']);
+}
 
 //$connect_string = "host=".DB_SERVER." port=5432 dbname=".DB_DATABASE." user=".DB_USER." password=".DB_PASSWORD;
 
@@ -88,10 +91,35 @@ if ($_GET["select_menu"]>0){
 	}
 }
 ?>
+
+<script>
+//скрипт из интернета для проверки совпадения паролей без перезагрузки страницы (https://askdev.ru/q/kak-proverit-pole-podtverzhdeniya-parolya-v-forme-bez-perezagruzki-stranicy-140334/)
+var check = function() {
+	if (document.getElementById('password').value !=  "" || document.getElementById('confirm_password').value !=  "") {
+		var regexp = /[а-яё]/i;
+		if(regexp.test(document.getElementById('password').value)) {
+		document.getElementById('message').style.color = 'red';
+		document.getElementById('message').innerHTML = 'Только английские буквы и цифры a-z, 0-9.';
+		} else if (document.getElementById('password').value ==
+		document.getElementById('confirm_password').value) {
+		document.getElementById('message').style.color = 'green';
+		//document.getElementById('message').innerHTML = '&#10004;';
+		document.getElementById('message').innerHTML = '<br/><input type="submit" class="btn btn-success" name="ch_sec_pass" value="Сохранить">';
+		} else {
+		document.getElementById('message').style.color = 'red';
+		document.getElementById('message').innerHTML = 'Пароли не совпадают!'; 
+		}
+	}
+}
+</script>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 	<? require("sys/metacss.php");?>
+	<style>
+		.yellowform {outline: 2px solid #fff; background: #FCFF90; border-radius: 10px; padding: 8px}
+	</style>
 </head>
 <body>
 	<a href="sys/logout.php">Настройка</a>
@@ -220,8 +248,8 @@ if ($_GET["select_menu"]>0){
 	if ($select_menu==4) { //Меню Админка
 		?>
 		<div class="col-sm-4 col-sm-offset-4">
-			<form method="post" >
-				<h4>Задать новый пароль сотрудникам</h4>
+			<form method="post" class="yellowform">
+				<h5>Задать новый пароль сотрудникам</h5>
 				</br>
 				<div style="display: flex; width: 200px">
 					<label style="width: 30%">chop</label>
@@ -244,6 +272,17 @@ if ($_GET["select_menu"]>0){
 				</div>
 				</br>
 				<input type="submit" style="width: 120px;" name="set_pass" value="Сохранить" class="btn btn-success">
+			</form>
+			<form method="post" class="yellowform">
+				<h5>Или поменять свой пароль</h5>
+				<label>Пароль для пользователя <b>secur</b> :
+					<input class="form-control" required name="password" id="password" type="password" onkeyup='check();' />
+				</label>
+				<br>
+				<label>Подтверждение пароля :
+						<input class="form-control" required type="password" name="pass_confirm" id="confirm_password"  onkeyup='check();' /> 			
+				</label>
+				</br><span id='message'></span>
 			</form>
 		</div>
 	<?

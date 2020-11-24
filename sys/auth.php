@@ -26,7 +26,7 @@ if (isset($_POST['login']) && isset($_POST['password']) && $text == "") {
 			$_SESSION['umag'] = $store;
 		}
 	} else {
-		$text = 'Неверный логин или пароль' .' '.$result[0].'/'."select u.pwdhash, u.name, r.name, u.mag from users u inner join roles r on u.role_id = r.id  where u.mag = ".$store." and u.name = '" .$username. "'";
+		$text = 'Неверный логин или пароль'; //.' '.$result[0].'/'."select u.pwdhash, u.name, r.name, u.mag from users u inner join roles r on u.role_id = r.id  where u.mag = ".$store." and u.name = '" .$username. "'";
 	}
 	pg_close($dbconnect);     
 }

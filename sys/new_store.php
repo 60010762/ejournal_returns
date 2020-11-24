@@ -67,17 +67,23 @@ var check = function() {
 <html lang="ru">
 <head>
 	<? require("metacss.php");?>
+	<style>
+		.yellowform {outline: 2px solid #fff; background: #FCFF90; border-radius: 10px; padding: 8px}
+	</style>
 </head>
 <body>
-	<div class="col-sm-4 col-sm-offset-4">
-	<h4>Создание нового магазина.</h4>
-	<h4>Все поля обязательны для заполнения.</h4>
-	
+	<div class="col-sm-4 col-sm-offset-4" style="display: flex; padding: 15px 20px">
+	<h5>Создать новый магазин или&emsp;</h5>
+	<a href="../index.php" Class="btn btn-danger btn-sm">Выйти</a>		
+	</div>
+
 	<?
-	if ($text!="") echo '</br></br><span style="color: red">'.$text.'</span></br></br>';
+	if ($text!="") echo '</br></br><span style="color: red">&emsp;&emsp;'.$text.'</span></br></br>';
 	?>
-		
-	<form method="post">
+	
+	<div class="col-sm-4 col-sm-offset-4">	
+	<form method="post" class="yellowform">
+	<font color="red">Все поля обязательны для заполнения!</font></br>
 		<label>Номер магазина</label>
 		<input type="text" class="form-control" style="width: 70px" name="store_nmbr" required autofocus onkeyup="this.value = this.value.replace (/[^0-9]/, '')"><br/>
 		<label>Название магазина</label>
@@ -91,8 +97,8 @@ var check = function() {
 			}
 			?>
 		</select>
-		</br><br/>
-		<label>Пароль для пользователя secur :
+		</br>
+		<label>Пароль для пользователя <b>secur</b> :
 			<input class="form-control" required name="password" id="password" type="password" onkeyup='check();' />
 		</label>
 		<br>

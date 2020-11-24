@@ -81,7 +81,7 @@ if (isset($_SESSION['uname']))
 		</div>
 		<?
 		}
-echo crypt("new"). '</br>';
+//echo crypt("new"). '</br>';
  ?>
 </body>
 </html>
