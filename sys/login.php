@@ -46,8 +46,7 @@ if (isset($_SESSION['uname']))
 							pg_close($dbconnect);
 							
 							echo '<option value=0>Новый магазин</option>';
-							echo '</select>';
-							
+							echo '</select>';							
 							?>
 							
 							<label>Логин</label>
