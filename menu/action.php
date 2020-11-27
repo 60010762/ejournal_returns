@@ -74,7 +74,14 @@ if(@$_POST['ch_sec_pass']) {
 	pg_close($db);
 	header('Location: index.php');
 }
-
+//переименование магазина
+if(@$_POST['set_store_name']) {
+	$store_name = pg_escape_string($_POST['store_name']);
+	pg_query($db,"UPDATE stores SET name = '".$store_name."' WHERE number =".$_SESSION['umag']);
+	pg_close($db);
+	$_SESSION['umagname'] = $store_name;
+	header('Location: index.php');
+}
 //утверждение возврата
 if(@$_POST['approve_return']) {
 	//$id_retrn = $_POST['id_retrn'];

@@ -14,7 +14,7 @@ if (isset($_POST['login']) && isset($_POST['password']) && $text == "") {
 		//exit;
 	
 	//$query = "select pwdhash, name, mag from users where mag = ".$store." and name = '" .$username. "'";
-	$query = "select pwd" .$username. " from stores where number = ".$store;
+	$query = "select pwd" .$username. ", name from stores where number = ".$store;
 	$result = pg_query($db, $query);
 	$result = pg_fetch_row($result); 
 	if (password_verify($userpass, $result[0])) {
@@ -24,6 +24,7 @@ if (isset($_POST['login']) && isset($_POST['password']) && $text == "") {
 		} else {
 			$_SESSION['uname'] = $username;
 			$_SESSION['umag'] = $store;
+			$_SESSION['umagname'] = $result[1];
 		}
 	} else {
 		$text = 'Неверный логин или пароль'; //.' '.$result[0].'/'."select u.pwdhash, u.name, r.name, u.mag from users u inner join roles r on u.role_id = r.id  where u.mag = ".$store." and u.name = '" .$username. "'";

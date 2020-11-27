@@ -26,6 +26,7 @@ include "menu/action.php";
 		.smallbtn {border: 1px solid #C0C0C0; display: inline-block; padding: 5px; text-align: center; text-decoration: none; color: #000; width: 90px; background: #fcfff4;}
 		.smallbtn:hover {box-shadow: 0 0 5px rgba(0,0,0,0.3);background: linear-gradient(to bottom, #fcfff4, #e9e9ce);color: #a00;text-decoration: none;}
 	</style>
+	<title>Журнал возвратов</title>
 </head>
 <body>
 	<div style="text-align: right;" >			
@@ -35,6 +36,7 @@ include "menu/action.php";
 		?>
 		<a href="sys/logout.php">Выход</a>
 	</div>
+	<h4><?=$_SESSION['umagname']?></h4>
 	<nav aria-label="Page navigation example">
 		<ul class="pagination">
 			<?

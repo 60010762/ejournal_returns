@@ -30,8 +30,9 @@ if (isset($_SESSION['uname']))
 				<div class="row">
 					<div class="col-sm-4 col-sm-offset-4">							
 						<form role="form" action="login.php" method="post">
-							<center><img src="img/logo.svg"/><h2 class="form-signin-heading">Электронный журнал возвратов</h2></center><br/>
-							<center><h4 class="form-signin-heading" style="color: #6c6;">Добро пожаловать</h4></center>
+							<center><img src="../img/logo.svg"/><h2 class="form-signin-heading">Электронный журнал возвратов</h2></center>
+							<br />
+							<!--<center><h4 class="form-signin-heading" style="color: #6c6;">Добро пожаловать</h4></center>-->
 							<label>Магазин</label>
 							<?
 							echo '<select class="form-control" name="store">';
@@ -50,9 +51,10 @@ if (isset($_SESSION['uname']))
 							?>
 							
 							<label>Логин</label>
-							<input type="text" class="form-control" name="login" required autofocus><br/>
+							<input type="text" class="form-control" name="login" required autofocus>
 							<label>Пароль</label>
-							<input type="password" class="form-control" name="password" required><br/>
+							<input type="password" class="form-control" name="password" required>
+							<br /><br />
 							<button class="btn btn-lg btn-success btn-block" type="submit">Войти</button>
 						</form>
 					</div>
@@ -80,7 +82,6 @@ if (isset($_SESSION['uname']))
 		</div>
 		<?
 		}
-//echo crypt("new"). '</br>';
  ?>
 </body>
 </html>

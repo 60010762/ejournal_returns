@@ -22,27 +22,27 @@ var check = function() {
 		<div class="col-sm-4 col-sm-offset-4">
 			<form method="post" class="yellowform">
 				<h5>Задать новый пароль сотрудникам</h5>
-				</br>
+				<br />
 				<div style="display: flex; width: 200px">
 					<label style="width: 30%">chop</label>
 					<input type="text" class="form-control" name="pchop">					
 				</div>
-				</br>
+				<br />
 				<div style="display: flex; width: 200px">
 					<label style="width: 30%">cais</label>
 					<input type="text" class="form-control" name="pcais">					
 				</div>
-				</br>
+				<br />
 				<div style="display: flex; width: 200px">
 					<label style="width: 30%">ozk</label>
 					<input type="text" class="form-control" name="pozk">					
 				</div>
-				</br>
+				<br />
 				<div style="display: flex; width: 200px">
 					<label style="width: 30%">dd</label>
 					<input type="text" class="form-control" name="pdd">					
 				</div>
-				</br>
+				<br />
 				<input type="submit" style="width: 120px;" name="set_pass" value="Сохранить" class="btn btn-success">
 			</form>
 			<form method="post" class="yellowform">
@@ -50,11 +50,18 @@ var check = function() {
 				<label>Пароль для пользователя <b>secur</b> :
 					<input class="form-control" required name="password" id="password" type="password" onkeyup='check();' />
 				</label>
-				<br>
+				<br />
 				<label>Подтверждение пароля :
 						<input class="form-control" required type="password" name="pass_confirm" id="confirm_password"  onkeyup='check();' /> 			
 				</label>
-				</br><span id='message'></span>
+				<br />
+				<span id='message'></span>
+			</form>
+			<form method="post" class="yellowform">
+				<h5>или переименовать магазин</h5>
+				<input class="form-control" required name="store_name" value="<?=$_SESSION['umagname']?>"/>
+				<br />
+				<input type="submit" style="width: 120px;" name="set_store_name" value="Сохранить" class="btn btn-success">
 			</form>
 		</div>
 </html>
