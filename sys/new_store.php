@@ -15,7 +15,24 @@ if(@$_POST['insert_new_store']) {
 		$text = "Магазин ".$store." уже существует.";
 		pg_close($db);
 	} else {
-		pg_query($db,"INSERT INTO stores (number, name, time_zone, pwdsecur) VALUES (".$store.", '".$store_name."', ".$tz.", '".crypt($password)."')");
+		$sql="INSERT INTO stores (number, name, time_zone, pwdsecur) 
+		VALUES (".$store.", '".$store_name."', ".$tz.", '".crypt($password)."')";
+		pg_query($db,$sql);
+		
+		$sql="CREATE TABLE public.tbl_st_".$store." (
+				id int NOT NULL GENERATED ALWAYS AS IDENTITY,
+				online_ord boolean NULL,
+				dt timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+				ord_num varchar NULL,
+				trn varchar NULL,
+				item_ean varchar NULL,
+				item_lm varchar NULL,
+				item_name varchar NULL,
+				qty numeric NULL,
+				total numeric NULL,
+				retrn varchar NULL)";
+		pg_query($db,$sql);
+		
 		pg_close($db);
 		header('Location: ../index.php');
 		exit;

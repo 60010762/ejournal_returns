@@ -31,7 +31,7 @@ if ($_GET["select_menu"]>0){
 	<? require("sys/metacss.php");?>
 	<style>
 		.yellowform {outline: 2px solid #fff; background: #FCFF90; border-radius: 10px; padding: 8px}
-		.smallbtn {height: 20px; width: 70px; font-size : 12px;}
+		.smallbtn {height: 20px; width: 70px; height: 40px; font-size : 12px;}
 	</style>
 </head>
 <body>

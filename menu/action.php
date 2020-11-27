@@ -9,9 +9,9 @@ if(@$_POST['search_item']) {
 			"verify_peer_name"=>false,
 		),
 	);  
+	$json=file_get_contents("https://locdev/ld_pre/db/index.php?ean_lm=" .$item, false, stream_context_create($arrContextOptions));
 	//$json=file_get_contents("https://locdev/ld_pre/db/index.php?ean_lm=" .$item, false, stream_context_create($arrContextOptions));
-	//$json=file_get_contents("https://locdev/ld_pre/db/index.php?ean_lm=" .$item, false, stream_context_create($arrContextOptions));
-	$json = '{"ean": "0020066118457","lm": "13321233","name": "Эмаль д/лодок MarineCoat.подвод.син 0,9л"}';
+	//$json = '{"ean": "0020066118457","lm": "13321233","name": "Эмаль д/лодок MarineCoat.подвод.син 0,9л"}';
 	
 	$arr= json_decode($json,true);
 	$item_ean = $arr['ean'];
@@ -26,21 +26,20 @@ if(@$_POST['search_item']) {
 //добавление новой строки в базу о возврате
 if(@$_POST['insert_new_record']) {
 	$n_ord = pg_escape_string($_POST['n_ord']);
-	$n_trn = pg_escape_string($_POST['n_trn']);
+	//$n_trn = pg_escape_string($_POST['n_trn']);
 	$item_ean = pg_escape_string($_POST['item_ean']);
 	$item_lm = pg_escape_string($_POST['item_lm']);
 	$item_name = pg_escape_string($_POST['item_name']);
 	$qty = pg_escape_string(str_replace(',', '.', $_POST['qty']));
 	$total = pg_escape_string(str_replace(',', '.', $_POST['total']));
 	
-	if (is_numeric($n_ord) && is_numeric($n_trn) && is_numeric($qty) && is_numeric($total)) {	
-		$query = "INSERT INTO online (ord, trn, ean, lm, item_name, qty, total) 
-		VALUES ('".$n_ord."', '".$n_trn."', '".$item_ean."', '".$item_lm."', '".$item_name."', '".$qty."', '".$total."')";
+	if (is_numeric($n_ord) && is_numeric($qty) && is_numeric($total)) {	
+		$query = "INSERT INTO tbl_st_".$_SESSION['umag']." (online_ord, ord_num, trn, item_ean, item_lm, item_name, qty, total) 
+		VALUES ('true', '".$n_ord."', '', '".$item_ean."', '".$item_lm."', '".$item_name."', '".$qty."', '".$total."')";
 		pg_query($db, $query);
 		pg_close($db);
 		//предотвращение повторной отправки формы
 		header("Location:".$_SERVER['PHP_SELF']);
-	//$_SESSION['temp'] = $query;
 	} else {
 		//'<p style="border:3px #00B344  solid;>'.
 		$text = 'Запись не добавлена. Проверьте корректность данных:';
@@ -76,24 +75,27 @@ if(@$_POST['ch_sec_pass']) {
 	header('Location: index.php');
 }
 
-if(@$_POST['confirm_return']) {
-	$n_ord = pg_escape_string($_POST['n_ord']);
-	$item_lm = pg_escape_string($_POST['item_lm']);
-	if ($_POST['confirm_return']=="утвердить") {
-		$confirm_return="утверждено";
-	} else {
-		$confirm_return="отклонено";
-	}
+//утверждение возврата
+if(@$_POST['approve_return']) {
+	$id_retrn = $_POST['id_retrn'];
+	//$n_ord = pg_escape_string($_POST['n_ord']);
+	//$item_lm = pg_escape_string($_POST['item_lm']);
 	$total = pg_escape_string(str_replace(',', '.', $_POST['total']));
-	pg_query($db,"UPDATE online SET total = ".$total.", return = '".$confirm_return."' WHERE ord = '".$n_ord."' AND lm = '".$item_lm."'");
-	$text = "UPDATE online SET total = ".$total.", return = '".$confirm_return."' WHERE ord = '".$n_ord."' AND lm = '".$item_lm."'";
+	$confirm_return="утверждено";
+	
+	pg_query($db,"UPDATE tbl_st_".$_SESSION['umag']." SET total = ".$total.", retrn = '".$confirm_return."' WHERE id = ".$id_retrn);
+	
 	pg_close($db);
-	//header('Location: index.php');
-}	
-if(isset($_GET['confirm'])) {
-	$i=substr($_GET['confirm'], 1);
-	//$text=$_POST['n_ord'.]);
-	$text = $_GET['n_ord'.$i];
-	//header('Location: index.php?select_menu=1');
+	header('Location: index.php?select_menu=1');
+}
+
+if ($_GET["approve"]>0){
+	$approve = pg_escape_string($db,htmlspecialchars(trim($_GET["approve"])));
+} else {
+	if ($_POST["approve"]>0){
+		$approve = pg_escape_string($db,htmlspecialchars(trim($_POST["approve"])));
+	} else {
+		//$approve = 0;
+	}
 }
 ?>
