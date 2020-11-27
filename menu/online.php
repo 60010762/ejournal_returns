@@ -78,39 +78,57 @@
 					$input_total =$result[7];
 					$confirm_return = $result[8];
 				} */
+				//если заказ утвержден или отклонен, то подкрасим зеленым и красным соотв.
+				if ($result[8] == "утвержден") {
+					$rowstyle ='style="background: #98FB98"';
+				} elseif ($result[8] == "отклонен") {
+					$rowstyle ='style="background: #F08080"';
+				} else {
+					$rowstyle = "";
+				}
+				
+				$input_total =$result[7];
+				$approve_return = $result[8];
+				
 				if ($_SESSION['uname'] == 'ozk') {
 					if ($result[8]!="") {
-						//$input_ord = $result[2];
-						//$input_lm= $result[4];
-						$input_total =$result[7];
-						$approve_return = $result[8];
-						$rowstyle='';
-					} elseif ($approve==$i) {
-						//$input_ord = '<input style="width: 100px;border: none; outline: none;" name="n_ord" readonly value='.$result[2].'>';
-						//$input_lm = '<input style="width: 70px;border: none; outline: none;" name="item_lm" readonly value='.$result[4].'>';
-						$input_total ='<input style="width: 100px" type="text" class="form-control" name="total" value='.$result[7].' onkeyup="this.value = this.value.replace (/[^0-9\.\,]/, '."''".')">';
+						//$input_total =$result[7];
+						//$approve_return = $result[8];
+
+						
+					} elseif ($approve==$i) {						
+						//режим подтверждения строки. поле с суммой становится input (только цифры и . ,) и появляется submit на внесение в базу
+						$input_total ='<input style="width: 100px" type="text" class="form-control" name="total" value='.$result[7].' autofocus onfocus="javascript:text_save=value;value=\'\';value=text_save;" onkeyup="this.value = this.value.replace (/[^0-9\.\,]/, '."''".')">';
 						$approve_return='<input type="hidden" name="id_retrn" value='.$result[9].'></input><input type="submit" class="smallbtn" name="approve_return" value="утвердить""></br></br>
-										<a class="smallbtn" href="index.php?select_menu='.$select_menu.'">отмена</a>';
-						$rowstyle='style="background: #FCFF90"';
+										<a href="index.php?select_menu='.$select_menu.'" class="smallbtn" >отмена</a>';
+						$rowstyle='style="background: #FCFF90"; font-weight: bolder;';
+					} elseif ($reject==$i) {
+						//режим отклонения строки. появляется submit на отклонение
+						$approve_return='<input type="hidden" name="id_retrn" value='.$result[9].'></input><input type="submit" class="smallbtn" name="approve_return" value="отклонить""></br></br>
+										<a href="index.php?select_menu='.$select_menu.'" class="smallbtn" >отмена</a>';
+						$rowstyle='style="background: #FCFF90"; font-weight: bolder;';
 					} else {
-						//$input_ord = $result[2];
-						//$input_lm= $result[4];
-						$input_total =$result[7];
+						//статус строки не определен, ставим два варианта: утвердить или отклонить
 						$approve_return = '<a href="index.php?select_menu='.$select_menu.'&approve='.$i.'">утвердить</a>
-											<a href="index.php?select_menu='.$select_menu.'&reject'.$i.'">отклонить</a>';
-						$rowstyle='';
+											<a href="index.php?select_menu='.$select_menu.'&reject='.$i.'">отклонить</a>';
 					}
-				}	
+				} else {
+					//$input_total =$result[7];
+					//$approve_return = $result[8];
+				}
 				
-				echo '<tr '.$rowstyle.'><td>'.$result[0].'</td><td>'.$result[1].'</td>
-				<td>'.$result[2].'</td>
-				<td>'.$result[3].'</td>
-				<td>'.$result[4].'</td>				
-				<td>'.$result[5].'</td>
-				<td>'.$result[6].'</td>
-				<td>'.$input_total.'</td>
-				<td>'.$approve_return.'</td>
-				<td>'.$result[9].'</td></tr>';	
+				echo '<tr '.$rowstyle.'>
+						<td>'.$result[0].'</td>
+						<td>'.$result[1].'</td>
+						<td>'.$result[2].'</td>
+						<td>'.$result[3].'</td>
+						<td>'.$result[4].'</td>				
+						<td>'.$result[5].'</td>
+						<td>'.$result[6].'</td>
+						<td>'.$input_total.'</td>
+						<td>'.$approve_return.'</td>
+						<td>'.$result[10].'</td>
+					</tr>';	
 				$i++;
 
 					

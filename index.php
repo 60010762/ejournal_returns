@@ -12,15 +12,7 @@ if (!isset($_SESSION['uname']))
 
 include "menu/action.php";
 
-if ($_GET["select_menu"]>0){
-	$select_menu = trim($_GET["select_menu"]);
-} else {
-	if ($_POST["select_menu"]>0){
-		$select_menu = trim($_POST["select_menu"]);
-	} else {
-		$select_menu = 1;
-	}
-}
+
 ?>
 
 
@@ -30,8 +22,9 @@ if ($_GET["select_menu"]>0){
 <head>
 	<? require("sys/metacss.php");?>
 	<style>
-		.yellowform {outline: 2px solid #fff; background: #FCFF90; border-radius: 10px; padding: 8px}
-		.smallbtn {height: 20px; width: 70px; height: 40px; font-size : 12px;}
+		.yellowform {outline: 2px solid #fff; background: #FCFF90; border-radius: 10px; padding: 8px}		
+		.smallbtn {border: 1px solid #C0C0C0; display: inline-block; padding: 5px; text-align: center; text-decoration: none; color: #000; width: 90px; background: #fcfff4;}
+		.smallbtn:hover {box-shadow: 0 0 5px rgba(0,0,0,0.3);background: linear-gradient(to bottom, #fcfff4, #e9e9ce);color: #a00;text-decoration: none;}
 	</style>
 </head>
 <body>

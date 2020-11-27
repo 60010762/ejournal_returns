@@ -77,25 +77,53 @@ if(@$_POST['ch_sec_pass']) {
 
 //утверждение возврата
 if(@$_POST['approve_return']) {
-	$id_retrn = $_POST['id_retrn'];
+	//$id_retrn = $_POST['id_retrn'];
 	//$n_ord = pg_escape_string($_POST['n_ord']);
 	//$item_lm = pg_escape_string($_POST['item_lm']);
-	$total = pg_escape_string(str_replace(',', '.', $_POST['total']));
-	$confirm_return="утверждено";
+	//$total = pg_escape_string(str_replace(',', '.', $_POST['total']));
+	if ($_POST['approve_return']=="утвердить") {
+		$approve_return = "total = ".pg_escape_string(str_replace(',', '.', $_POST['total'])).", retrn = 'утвержден'";
+	} else {
+		$approve_return = "retrn = 'отклонен'";
+	}
 	
-	pg_query($db,"UPDATE tbl_st_".$_SESSION['umag']." SET total = ".$total.", retrn = '".$confirm_return."' WHERE id = ".$id_retrn);
+	
+	pg_query($db,"UPDATE tbl_st_".$_SESSION['umag']." SET ".$approve_return." WHERE id = ".$_POST['id_retrn']);
 	
 	pg_close($db);
 	header('Location: index.php?select_menu=1');
 }
 
+//выбор  меню
+if ($_GET["select_menu"]>0){
+	$select_menu = trim($_GET["select_menu"]);
+} else {
+	if ($_POST["select_menu"]>0){
+		$select_menu = trim($_POST["select_menu"]);
+	} else {
+		$select_menu = 1;
+	}
+}
+
+//указываем какой заказ утвердить
 if ($_GET["approve"]>0){
 	$approve = pg_escape_string($db,htmlspecialchars(trim($_GET["approve"])));
 } else {
 	if ($_POST["approve"]>0){
 		$approve = pg_escape_string($db,htmlspecialchars(trim($_POST["approve"])));
 	} else {
-		//$approve = 0;
+		$approve = 0;
+	}
+}
+
+//указываем какой заказ отклонить
+if ($_GET["reject"]>0){
+	$reject = pg_escape_string($db,htmlspecialchars(trim($_GET["reject"])));
+} else {
+	if ($_POST["reject"]>0){
+		$reject = pg_escape_string($db,htmlspecialchars(trim($_POST["reject"])));
+	} else {
+		$reject = 0;
 	}
 }
 ?>
